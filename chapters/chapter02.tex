@@ -37,10 +37,11 @@ SWJTU校徽如\autoref{SWJTU}所示，注意这里使用了\verb|~\autoref{}|命
 }
 
 \subsection{插入表格}
-本模板文件如\autoref{doc}所示。
+本模板文件如\autoref{doc}所示。11月11修改为三线表样式示例，更符合swjtu论文要求。
 \begin{table}[!htbp]
-    \centering
-    \begin{tabular}{l|l}
+    \centering % 将整个表格居中
+    \renewcommand{\arraystretch}{1.5} % 将行高增加到原来的1.5倍
+    \begin{tabular}{>{\centering\arraybackslash}p{5cm} >{\centering\arraybackslash}p{5cm}} % 每列5cm宽，文字居中  
     \hline
         文件名 & 说明 \\
         \hline
@@ -53,6 +54,7 @@ SWJTU校徽如\autoref{SWJTU}所示，注意这里使用了\verb|~\autoref{}|命
     \caption{本模板文件组成}
     \label{doc}
 \end{table}
+
 
 \subsection{插入数学逻辑环境}
 \begin{Theorem}   % 定理
@@ -80,7 +82,35 @@ SWJTU校徽如\autoref{SWJTU}所示，注意这里使用了\verb|~\autoref{}|命
 直接使用\verb|\cite{}|即可。
 
 例如：
+此处引用了文献\cite{kincaid2002numerical}。此处引用了文献\cite{2016The}.引用过的文献会自动出现在参考文献中。
 
-   \textit{ 此处引用了文献\cite{0Isaac}。此处引用了文献\cite{2016The}}
 
-引用过的文献会自动出现在参考文献中。
+\subsection{11月11号新增样式：定理框和代码}
+定理框样式如\cref{intermediate_value_theorem}所示。注意引用定理要用\verb|~\cref{}|
+\begin{tcolorbox}
+\begin{Theorem}
+ 若 $f$ 是区间 $[a, b]$ 上的连续函数，且 $f(a) f(b) < 0$，则 $f$ 在 $(a, b)$ 内必有一个零点。
+ \label{intermediate_value_theorem}
+\end{Theorem}
+\end{tcolorbox}
+
+python代码样式如下：
+\begin{lstlisting}[language=Python]
+def bisection_method(f, a, b, tol=1e-6, maxiter=100):
+    points = []  # 用于保存每次迭代的中点
+    if f(a) * f(b) >= 0:
+        print("f(a)和f(b)必须符号相反，以确保区间内有根。")
+        return None
+    for i in range(maxiter):
+        c = (a + b) / 2  # 计算中点
+        fc = f(c)
+        points.append(c)  # 保存当前中点
+        if abs(fc) < tol:  # 检查当前误差是否小于容差
+            return c, points
+        if f(a) * fc < 0:  # 根据符号判断根所在的区间
+            b = c
+        else:
+            a = c
+    # 若达到最大迭代次数仍未找到解，返回中点作为近似解
+    return (a + b) / 2, points
+\end{lstlisting}

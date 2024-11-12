@@ -1,16 +1,3 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%SWJTU课程论文模板
-%%作者：Pungjay
-%%GitHub：https://github.com/Pungjay/swjtuReport
-%%Overleaf：https://cn.overleaf.com/latex/templates/swjtureport/drdffmpsxsbc
-%%最后更改于2024/05/31
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%在"UCAS课程论文模板"基础上修改而来
-%%原作者：jweihe
-%%GitHub：https://github.com/jweihe/UCAS_Latex_Template
-%%Overleaf：https://www.overleaf.com/latex/templates/zhong-guo-ke-xue-yuan-da-xue-ke-cheng-lun-wen-mo-ban/nphpxhhqvnds
-
 \ProvidesPackage{swjtuReport}
 
 % 页边距
@@ -25,17 +12,49 @@
 \RequirePackage{multirow}
 \RequirePackage{makeidx}
 \RequirePackage{xcolor}
-\RequirePackage{fontspec}
+\RequirePackage{fontspec}  % 字体选择的宏包
+\RequirePackage{setspace}  % 导入 setspace 宏包
 \RequirePackage{subfigure}
 \RequirePackage{hyperref}
 \RequirePackage{pythonhighlight}
 \RequirePackage{tcolorbox}
 \RequirePackage{fontawesome}
 \RequirePackage{caption}
+\RequirePackage{cleveref}
+\RequirePackage{etoolbox}
+\RequirePackage{natbib}
+\RequirePackage{booktabs} % 如果需要三线表
+\RequirePackage{array} % 引入 array 包以便调整列对齐方式
+
+% 设置中英文字体
+\setmainfont{Times New Roman}[
+    BoldFont = {Times New Roman Bold},
+    ItalicFont = {Times New Roman Italic},
+    BoldItalicFont = {Times New Roman Bold Italic}
+]
+\setCJKmainfont{Noto Serif CJK SC}[
+    BoldFont = {Noto Serif CJK SC},
+    ItalicFont = {Noto Serif CJK SC},
+    AutoFakeBold = true,
+    AutoFakeSlant = true
+]
+
+% 段落设置
+\setlength{\parindent}{2em}  % 设置段落首行缩进为2个字母宽度
+% 行距设置
+% 解释行距设置
+% 一般的 LaTeX 默认行距为 12 磅（约为单倍行距）
+% 要设置为 20 磅，比例大约为 20/12 = 1.655
+\setstretch{1.655}     % 设置行距为 20 磅
 
 % 去掉图表标题中的冒号，将分隔变为空格
 \captionsetup[figure]{labelsep=space}
 \captionsetup[table]{labelsep=space}
+% 
+% 自己创建了一个字号 小五
+\DeclareCaptionFont{customfont}{\fontsize{10.5}{12}\selectfont}
+\captionsetup[table]{font=customfont}
+\captionsetup[figure]{font=customfont}
 % \captionsetup{labelformat=default,labelsep=space} % 去除冒号
 
 \numberwithin{equation}{section} % 公式按章节编号
@@ -60,7 +79,6 @@
 \def\figureautorefname{图}
 \def\tableautorefname{表}
 \def\equationautorefname{式}
-\def\theoremautorefname{定理}
 \def\footnoteautorefname{脚注}
 \def\partautorefname{篇}
 \def\chapterautorefname{章}
@@ -80,27 +98,67 @@
 \newtheorem{Definition}[Theorem]{定义}
 \newtheorem{Example}[Theorem]{例}
 
+\crefname{Theorem}{定理}{定理}
+\crefname{Lemma}{引理}{引理}
+\crefname{Corollary}{推论}{推论}
+\crefname{Proposition}{命题}{命题}
+\crefname{Definition}{定义}{定义}
+\crefname{Example}{例}{例}
+
+
 % 参考文献设置
-\RequirePackage{natbib}
+
+% 重定义 \cite 命令为手动调整位置的上标带方括号，使其在数学环境中也能正确显示
+\renewcommand{\cite}[1]{\textsuperscript{\text{[\citenum{#1}]}}}
+
 \newcommand{\reference}{
-    \bibliographystyle{plain}    % 规定了参考文献的格式，建议使用plain,plainnat,abbrvnat内置格式，也可以自制样式.bst文件来导入使用
+    \bibliographystyle{unsrt}    % 规定了参考文献的格式，建议使用plain,plainnat,abbrvnat内置格式，也可以自制样式.bst文件来导入使用
     \bibliography{references}    % 调出LaTeX生成参考文献列表
     %\setcitestyle{open={(},close={)}}
 }
 
+% 自定义颜色
+\definecolor{mygray}{rgb}{0.95, 0.95, 0.95}
+\definecolor{mygreen}{rgb}{0, 0.6, 0}
+\definecolor{myblue}{rgb}{0, 0, 0.8}
+\definecolor{myred}{rgb}{0.8, 0, 0}
 % 文本框设置
 \newcommand{\tbox}[1]{
 \begin{center}
-\begin{tcolorbox}[colback=gray!10,         % gray background
-                  colframe=black,          % black frame colour
-                  width=8cm,               % Use 8cm total width,
-                  arc=1mm, auto outer arc,
-                  boxrule=0.5pt,
+\begin{tcolorbox}[colback=mygray,         % 灰色背景
+                  colframe=black,          % 黑色边框
+                  arc=1mm,                 % 圆角设置
+                  boxrule=0.5pt,           % 边框线宽
+                  width=\linewidth,        % 设置宽度为当前行宽
+                  boxsep=5pt,              % 内边距
+                  left=2pt, right=0pt,     % 左右内边距
                  ]
-{#1}
+#1 % 文本框内容
 \end{tcolorbox}
 \end{center}
 }
+% 浅灰色边框
+\tcbset{
+    colframe=black,            % 边框颜色
+    colback=mygray,             % 背景颜色
+    coltitle=black,
+    boxrule=0.8pt               % 边框线的粗细
+}
+% 定义Python代码的样式
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{mygray},      % 设置背景颜色
+    commentstyle=\color{mygreen},        % 注释的颜色
+    keywordstyle=\color{myblue},         % 关键词的颜色
+    numberstyle=\tiny\color{gray},       % 行号的颜色和大小
+    stringstyle=\color{myred},           % 字符串的颜色
+    basicstyle=\ttfamily\footnotesize,   % 代码的基本样式
+    breaklines=true,                     % 自动换行
+    frame=lines,                         % 代码块周围加上边框线
+    numbers=left,                        % 行号显示在左侧
+    numbersep=5pt,                       % 行号和代码的间距
+}
+\lstset{style=mystyle}
+
 
 % 页眉设置，若某处留空则不显示
 \pagestyle{fancy}
